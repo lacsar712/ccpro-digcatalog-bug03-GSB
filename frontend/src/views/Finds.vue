@@ -154,7 +154,7 @@ function formatDate(v) {
 }
 
 async function loadMeta() {
-  const [u, m] = await Promise.all([api.get('/units', { params: { forSelect: 1 } }), api.get('/materials')])
+  const [u, m] = await Promise.all([api.get('/units'), api.get('/materials')])
   units.value = u.data
   materials.value = m.data
 }
