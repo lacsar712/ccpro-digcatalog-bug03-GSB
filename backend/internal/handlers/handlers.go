@@ -149,9 +149,6 @@ func (h *Handler) DeleteSite(c *gin.Context) {
 func (h *Handler) ListUnits(c *gin.Context) {
 	var units []models.Unit
 	q := h.DB.Preload("Site").Order("id desc")
-	if c.Query("forSelect") == "1" {
-		q = h.DB.Unscoped().Preload("Site").Order("id desc")
-	}
 	if siteID := c.Query("siteId"); siteID != "" {
 		q = q.Where("site_id = ?", siteID)
 	}
@@ -369,8 +366,8 @@ func (h *Handler) CreateFind(c *gin.Context) {
 		return
 	}
 	var unit models.Unit
-	if err := h.DB.Unscoped().First(&unit, req.UnitID).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "所属探方不存在"})
+	if err := h.DB.First(&unit, req.UnitID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "所属探方不存在或已删除"})
 		return
 	}
 	var find models.Find
@@ -396,8 +393,8 @@ func (h *Handler) UpdateFind(c *gin.Context) {
 		return
 	}
 	var unit models.Unit
-	if err := h.DB.Unscoped().First(&unit, req.UnitID).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "所属探方不存在"})
+	if err := h.DB.First(&unit, req.UnitID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "所属探方不存在或已删除"})
 		return
 	}
 	h.applyFindReq(&find, &req)
